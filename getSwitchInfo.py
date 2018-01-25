@@ -38,7 +38,7 @@ while True:
             htmlString += errorStatus.prettyPrint()
         else:
             for s in varBinds:
-                htmlString += s + " "
+                htmlString += str(s) + " "
 
         htmlFile.write(htmlString + " <br>")
 
