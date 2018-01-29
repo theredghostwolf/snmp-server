@@ -39,9 +39,8 @@ while True:
         else:
             for s in varBinds:
                 s = str(s)
-                parts = s.split(",")
-                for p in parts:
-                    htmlString += p + " <br>"
+                s.replace(",", " <br> ")
+                htmlString += s + " <br>"
 
         htmlFile.write(htmlString + " <br> <br>")
 
