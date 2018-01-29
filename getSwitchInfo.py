@@ -38,9 +38,12 @@ while True:
             htmlString += errorStatus.prettyPrint()
         else:
             for s in varBinds:
-                htmlString += str(s) + " "
+                s = str(s)
+                parts = s.split(",")
+                for p in parts:
+                    htmlString += p + " <br>"
 
-        htmlFile.write(htmlString + " <br>")
+        htmlFile.write(htmlString + " <br> <br>")
 
     htmlFile.close()
     print("updated file...")
