@@ -1,6 +1,8 @@
-install the python library: pysnmp before running.
+# SNMP server
 
-then set your switches in switches.txt
-run getSwitchInfo.py and run server.py
+## Requirements
+install the python library `pysnmp` before running.
 
-done.
+## How to use
+Set your switches' ip addresses in switches.txt.
+Run `getSwitchInfo.py` and run `server.py` with python and you are done.
