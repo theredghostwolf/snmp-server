@@ -4,6 +4,7 @@ import time
 from pysnmp.hlapi import *
 import os
 import os.path
+import datetime
 
 #variables
 
@@ -15,11 +16,60 @@ switchStartupConfigFolder = "test"
 
 #code and stuff
 
+def cleanupStartupFiles():
+    fList = os.listdir(switchStartupConfigFolder)
+    finalList = []
+
+    for x in fList:
+        f = x
+        f = f.split("-")
+        f = list(filter(None, f))
+
+        stamp = f[1] + ":" + f[2] + ":" + f[3] + ":" + f[4]  + ":" + f[5]
+
+        t = datetime.datetime.strptime(stamp, "%b:%d:%H:%M:%S.%f")
+
+        finalList.append([f[0], t, x])
+
+
+    types = []
+
+    for x in finalList:
+        added = False
+        for z in types:
+            if z[0] == x[0]:
+                z[1].append(x)
+                added = True
+
+        if not added:
+            types.append([x[0], [x]])
+
+
+    for t in types:
+        times = []
+        for f in t[1]:
+            times.append(f[1])
+
+        newest = max(dt for dt in times)
+
+
+        for f in t[1]:
+            if f[1] == newest:
+                old_file = os.path.join(switchStartupConfigFolder, f[2])
+                new_file = os.path.join(switchStartupConfigFolder, f[0])
+                os.rename(old_file, new_file)
+            else:
+                os.remove(switchStartupConfigFolder + "/" + f[2])
+
+    print("cleaned-up files")
+
 def writeHtmlHeader(f):
     f.write('<head>  <link rel="stylesheet" href="main.css" media="screen" title="no title">  <script src="main.js"></script>  </head>')
 
 
 while True:
+    cleanupStartupFiles()
+
     SwitchFile = open(SwitchList, "r")
     content = SwitchFile.readlines()
     SwitchFile.close()
