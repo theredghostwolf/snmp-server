@@ -13,8 +13,16 @@ SwitchList = "switches.txt"
 refreshDelay = 60 #in seconds
 requestTimeOut = 161
 switchStartupConfigFolder = "test"
+latestStartupConfigFolder = "test2"
 
 #code and stuff
+
+def checkFiles():
+    if not os.path.isdir(switchStartupConfigFolder):
+        os.mkdir(switchStartupConfigFolder)
+
+    if not os.path.isdir(latestStartupConfigFolder):
+        os.mkdir(latestStartupConfigFolder)
 
 def cleanupStartupFiles():
     fList = os.listdir(switchStartupConfigFolder)
@@ -55,9 +63,14 @@ def cleanupStartupFiles():
 
         for f in t[1]:
             if f[1] == newest:
-                old_file = os.path.join(switchStartupConfigFolder, f[2])
-                new_file = os.path.join(switchStartupConfigFolder, f[0])
-                os.rename(old_file, new_file)
+                old = open(switchStartupConfigFolder + "/" + f[2], 'r')
+                new = open(latestStartupConfigFolder + "/" + f[0], 'w')
+
+                oldContent = old.read()
+                new.write(oldContent)
+
+                old.close()
+                new.close()
             else:
                 os.remove(switchStartupConfigFolder + "/" + f[2])
 
@@ -67,6 +80,7 @@ def writeHtmlHeader(f):
     f.write('<head>  <link rel="stylesheet" href="main.css" media="screen" title="no title">  <script src="main.js"></script>  </head>')
 
 
+checkFiles()
 while True:
     cleanupStartupFiles()
 
@@ -109,15 +123,16 @@ while True:
         htmlFile.write(htmlString + " <button onclick='toggleDiv( " + str(index) + ")'> show config </button> <br> <br>")
 
         if txt is not None:
-            path = switchStartupConfigFolder + "/" + txt
+            path = latestStartupConfigFolder + "/" + txt
             if os.path.isfile(path):
                 switchStartupFile = open(path, 'r')
                 c = switchStartupFile.readlines()
                 switchStartupFile.close()
+                htmlFile.write("<div id='" + str(index) + "' style='display:none'>")
                 for z in c:
-                    htmlFile.write("<div id='" + str(index) + "' style='display:none'>" + z + " <br> </div> ")
+                    htmlFile.write(z + " <br>")
 
-                htmlFile.write(" <br> ")
+                htmlFile.write("</div> <br> ")
 
         index = index + 1
 
