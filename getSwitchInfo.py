@@ -3,6 +3,7 @@
 import time
 from pysnmp.hlapi import *
 import os
+import os.path
 
 #variables
 
@@ -14,11 +15,20 @@ switchStartupConfigFolder = "test"
 
 #code and stuff
 
+def writeHtmlHeader(f):
+    f.write('<head>  <link rel="stylesheet" href="main.css" media="screen" title="no title">  <script src="main.js"></script>  </head>')
+
+
 while True:
     SwitchFile = open(SwitchList, "r")
     content = SwitchFile.readlines()
     SwitchFile.close()
     htmlFile = open(HtmlFile, "w")
+
+    writeHtmlHeader(htmlFile);
+    index = 0
+
+
     for x in content:
         x = x.split(',')
         ip = x[0].strip()
@@ -46,16 +56,20 @@ while True:
                 s.replace(",", " <br> ")
                 htmlString += s + " <br> "
 
-        htmlFile.write(htmlString + " <br> <br>")
+        htmlFile.write(htmlString + " <button onclick='toggleDiv( " + str(index) + ")'> show config </button> <br> <br>")
 
         if txt is not None:
-            switchStartupFile = open(switchStartupConfigFolder + "/" + txt, 'r')
-            c = switchStartupFile.readlines()
-            switchStartupFile.close()
-            for z in c:
-                htmlFile.write(z + " <br> ")
+            path = switchStartupConfigFolder + "/" + txt
+            if os.path.isfile(path):
+                switchStartupFile = open(path, 'r')
+                c = switchStartupFile.readlines()
+                switchStartupFile.close()
+                for z in c:
+                    htmlFile.write("<div id='" + str(index) + "' style='display:none'>" + z + " <br> </div> ")
 
-            htmlFile.write(" <br> ")
+                htmlFile.write(" <br> ")
+
+        index = index + 1
 
     htmlFile.close()
     print("updated file...")
